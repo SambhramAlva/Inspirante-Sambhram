@@ -17,83 +17,103 @@ function CreateEvent() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(eventData);
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/events",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(eventData)
+        }
+      );
 
-    // Later:
-    // send data to backend API
+      const data = await response.json();
 
-    alert("Event Created Successfully!");
+      if (response.ok) {
+        alert("Event Created Successfully!");
 
-    setEventData({
-      name: "",
-      date: "",
-      venue: "",
-      capacity: ""
-    });
+        console.log(data);
+
+        setEventData({
+          name: "",
+          date: "",
+          venue: "",
+          capacity: ""
+        });
+      } else {
+        alert(data.message || "Failed to create event");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Server Error");
+    }
   };
 
   return (
     <div className="dashboard">
-          <AdminSidebar />
-          <main className="content">
-    <div className="form-container">
-      <div className="form-card">
+      <AdminSidebar />
 
-        <h1>Create Event</h1>
+      <main className="content">
+        <div className="form-container">
+          <div className="form-card">
 
-        <form onSubmit={handleSubmit}>
+            <h1>Create Event</h1>
 
-          <label>Event Name</label>
-          <input
-            type="text"
-            name="name"
-            value={eventData.name}
-            onChange={handleChange}
-            placeholder="Enter event name"
-            required
-          />
+            <form onSubmit={handleSubmit}>
 
-          <label>Date</label>
-          <input
-            type="date"
-            name="date"
-            value={eventData.date}
-            onChange={handleChange}
-            required
-          />
+              <label>Event Name</label>
+              <input
+                type="text"
+                name="name"
+                value={eventData.name}
+                onChange={handleChange}
+                placeholder="Enter event name"
+                required
+              />
 
-          <label>Venue</label>
-          <input
-            type="text"
-            name="venue"
-            value={eventData.venue}
-            onChange={handleChange}
-            placeholder="Enter venue"
-            required
-          />
+              <label>Date</label>
+              <input
+                type="date"
+                name="date"
+                value={eventData.date}
+                onChange={handleChange}
+                required
+              />
 
-          <label>Maximum Capacity</label>
-          <input
-            type="number"
-            name="capacity"
-            value={eventData.capacity}
-            onChange={handleChange}
-            placeholder="Enter capacity"
-            required
-          />
+              <label>Venue</label>
+              <input
+                type="text"
+                name="venue"
+                value={eventData.venue}
+                onChange={handleChange}
+                placeholder="Enter venue"
+                required
+              />
 
-          <button type="submit">
-            Create Event
-          </button>
+              <label>Maximum Capacity</label>
+              <input
+                type="number"
+                name="capacity"
+                value={eventData.capacity}
+                onChange={handleChange}
+                placeholder="Enter capacity"
+                required
+              />
 
-        </form>
+              <button type="submit">
+                Create Event
+              </button>
 
-      </div>
-    </div>
-    </main>
+            </form>
+
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
