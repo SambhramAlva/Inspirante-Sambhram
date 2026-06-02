@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import "../../styles/tables.css";
+import AdminSidebar from "../../components/AdminSidebar";
 
 function Events() {
   const events = [
@@ -22,6 +23,9 @@ function Events() {
   ];
 
   return (
+    <div className="dashboard">
+          <AdminSidebar />
+          <main className="content">
     <div className="table-container">
       <h1>All Events</h1>
 
@@ -59,6 +63,8 @@ function Events() {
           ))}
         </tbody>
       </table>
+    </div>
+    </main>
     </div>
   );
 }

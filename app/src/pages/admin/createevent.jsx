@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../../styles/forms.css";
+import AdminSidebar from "../../components/AdminSidebar";
 
 function CreateEvent() {
   const [eventData, setEventData] = useState({
@@ -35,6 +36,9 @@ function CreateEvent() {
   };
 
   return (
+    <div className="dashboard">
+          <AdminSidebar />
+          <main className="content">
     <div className="form-container">
       <div className="form-card">
 
@@ -88,6 +92,8 @@ function CreateEvent() {
         </form>
 
       </div>
+    </div>
+    </main>
     </div>
   );
 }

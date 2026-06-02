@@ -1,4 +1,5 @@
 import "../../styles/tables.css";
+import AdminSidebar from "../../components/AdminSidebar";
 
 function Registrations() {
   const registrations = [
@@ -23,6 +24,9 @@ function Registrations() {
   ];
 
   return (
+    <div className="dashboard">
+          <AdminSidebar />
+          <main className="content">
     <div className="table-container">
       <h1>Event Registrations</h1>
 
@@ -45,6 +49,8 @@ function Registrations() {
           ))}
         </tbody>
       </table>
+    </div>
+    </main>
     </div>
   );
 }
