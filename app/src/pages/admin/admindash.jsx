@@ -50,19 +50,7 @@ function AdminDashboard() {
 
         </div>
 
-        <div className="actions">
-
-          <h2>Quick Actions</h2>
-
-          <Link to="/admin/create-event">
-            <button>Create New Event</button>
-          </Link>
-
-          <Link to="/admin/events">
-            <button>Manage Events</button>
-          </Link>
-
-        </div>
+        
 
       </main>
     </div>

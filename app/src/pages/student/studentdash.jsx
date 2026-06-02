@@ -45,19 +45,7 @@ function StudentDashboard() {
 
         </div>
 
-        <div className="actions">
-
-          <h2>Quick Actions</h2>
-
-          <Link to="/student/events">
-            <button>Browse Events</button>
-          </Link>
-
-          <Link to="/student/registrations">
-            <button>View Registrations</button>
-          </Link>
-
-        </div>
+        
 
         <div
           style={{
