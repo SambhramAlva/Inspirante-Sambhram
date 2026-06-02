@@ -4,6 +4,14 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
+const authRoutes =
+  require("./routes/authRoutes");
+
+const eventRoutes =
+  require("./routes/eventRoutes");
+
+const registrationRoutes =
+  require("./routes/registrationRoutes");
 
 // Middleware
 app.use(cors());
@@ -13,6 +21,15 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Backend Running");
 });
+
+app.use("/api", authRoutes);
+
+app.use("/api/events", eventRoutes);
+
+app.use(
+  "/api/registrations",
+  registrationRoutes
+);
 
 // MongoDB Connection
 mongoose
