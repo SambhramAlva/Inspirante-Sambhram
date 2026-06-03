@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const eventSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
 
   date: {
@@ -13,7 +14,8 @@ const eventSchema = new mongoose.Schema({
 
   venue: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
 
   capacity: {
@@ -22,4 +24,22 @@ const eventSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("Event", eventSchema);
+/*
+ Prevent duplicate events having the same:
+ Name + Date + Venue
+*/
+eventSchema.index(
+  {
+    name: 1,
+    date: 1,
+    venue: 1
+  },
+  {
+    unique: true
+  }
+);
+
+module.exports = mongoose.model(
+  "Event",
+  eventSchema
+);

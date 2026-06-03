@@ -19,15 +19,55 @@ router.post(
   auth,
   authorize("admin"),
   async (req, res) => {
+
     try {
-      const event = new Event(req.body);
-      const savedEvent = await event.save();
-      res.status(201).json(savedEvent);
-    } catch (error) {
-      res.status(500).json({
-        message: error.message
+
+      const {
+        name,
+        date,
+        venue,
+        capacity
+      } = req.body;
+
+      const existingEvent =
+        await Event.findOne({
+          name: name.trim(),
+          date,
+          venue: venue.trim()
+        });
+
+      if (existingEvent) {
+
+        return res.status(400).json({
+          message:
+            "An event with the same name, date and venue already exists."
+        });
+
+      }
+
+      const event = new Event({
+        name: name.trim(),
+        date,
+        venue: venue.trim(),
+        capacity
       });
+
+      const savedEvent =
+        await event.save();
+
+      res.status(201).json(savedEvent);
+
+    } catch (error) {
+
+      console.error(error);
+
+      res.status(500).json({
+        message:
+          "Failed to create event"
+      });
+
     }
+
   }
 );
 
