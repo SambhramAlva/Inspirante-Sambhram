@@ -100,3 +100,31 @@
 .actions button:hover {
   background-color: #1d4ed8;
 }
+/* Logout Button */
+
+.logout-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+
+  background-color: #dc3545;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #c82333;
+}
+
+.logout-btn:active {
+  transform: scale(0.98);
+}
