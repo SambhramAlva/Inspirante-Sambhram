@@ -17,6 +17,14 @@
   background-color: #1e293b;
   color: white;
   padding: 25px;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 250px;
+  height: 100vh;
+
+  overflow-y: auto;
 }
 
 .sidebar h2 {
@@ -48,6 +56,8 @@
   flex: 1;
   padding: 30px;
   background-color: #f1f5f9;
+  margin-left: 250px;
+  padding: 20px;
 }
 
 .content h1 {
