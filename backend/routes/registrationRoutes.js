@@ -3,6 +3,17 @@ const router = express.Router();
 
 const Registration = require("../models/Registration");
 
+router.get("/", async (req, res) => {
+  try {
+    const registrations = await Registration.find();
+    res.json(registrations);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+});
+
 router.post("/", async (req, res) => {
   try {
     const registration =
