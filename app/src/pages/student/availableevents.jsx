@@ -60,6 +60,30 @@ function AvailableEvents() {
       const studentId =
         localStorage.getItem("userId");
 
+      if (!studentId) {
+        alert("Please log in first");
+        return;
+      }
+
+      const studentRegistrationsRes = await fetch(
+        `http://localhost:3000/api/registrations/student/${studentId}`
+      );
+
+      if (!studentRegistrationsRes.ok) {
+        throw new Error("Could not check your registrations");
+      }
+
+      const studentRegistrations = await studentRegistrationsRes.json();
+
+      const alreadyRegistered = studentRegistrations.some(
+        (reg) => (reg.eventId?._id || reg.eventId) === eventId
+      );
+
+      if (alreadyRegistered) {
+        alert("You are already registered for this event!");
+        return;
+      }
+
       const response = await fetch(
         "http://localhost:3000/api/registrations",
         {
@@ -90,13 +114,14 @@ function AvailableEvents() {
 
       } else {
 
-        alert(data.message);
+        alert(data.message || "Failed to register");
 
       }
 
     } catch (error) {
 
       console.error(error);
+      alert("Error: " + error.message);
 
     }
   };
