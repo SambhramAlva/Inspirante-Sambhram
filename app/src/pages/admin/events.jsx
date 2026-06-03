@@ -73,7 +73,7 @@ function Events() {
                 <th>Event Name</th>
                 <th>Date</th>
                 <th>Venue</th>
-                <th>Capacity</th>
+                <th>Availabile Seats</th>
                 <th>Fill %</th>
                 <th>Action</th>
               </tr>
@@ -84,6 +84,8 @@ function Events() {
               {events.map((event) => {
                 const fillPercentage = getCapacityFillPercentage(event);
                 const fillColor = getFillColor(fillPercentage);
+                const registeredCount =registrationCounts[event._id] || 0;
+  const availableSeats =event.capacity - registeredCount;
 
                 return (
                 <tr key={event._id}>
@@ -98,7 +100,7 @@ function Events() {
 
                   <td>{event.venue}</td>
 
-                  <td>{event.capacity}</td>
+                  <td>{availableSeats}/{event.capacity}</td>
 
                   <td>
                     <span

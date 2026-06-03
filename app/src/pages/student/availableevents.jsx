@@ -104,13 +104,14 @@ function AvailableEvents() {
 
     const registeredCount =
       registrationCounts[event._id] || 0;
+    
 
     return (
       registeredCount >=
       event.capacity
     );
   };
-
+  
   const handleRegister = async (
     eventId
   ) => {
@@ -299,7 +300,7 @@ function AvailableEvents() {
                 <th>Event</th>
                 <th>Date</th>
                 <th>Venue</th>
-                <th>Capacity</th>
+                <th>Available Seats</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -308,81 +309,87 @@ function AvailableEvents() {
 
             <tbody>
 
-              {events.map((event) => (
+  {events.map((event) => {
 
-                <tr key={event._id}>
+    const registeredCount =
+      registrationCounts[event._id] || 0;
 
-                  <td>
-                    {event.name}
-                  </td>
+    const availableSeats =
+      event.capacity - registeredCount;
 
-                  <td>
-                    {new Date(
-                      event.date
-                    ).toLocaleDateString()}
-                  </td>
+    const isEventFull =
+      availableSeats <= 0;
 
-                  <td>
-                    {event.venue}
-                  </td>
+    return (
 
-                  <td>
-                    {event.capacity}
-                  </td>
+      <tr key={event._id}>
 
-                  <td>
+        <td>{event.name}</td>
 
-                    {isFull(event) ? (
+        <td>
+          {new Date(
+            event.date
+          ).toLocaleDateString()}
+        </td>
 
-                      <span
-                        style={{
-                          color: "red",
-                          fontWeight:
-                            "bold"
-                        }}
-                      >
-                        Full
-                      </span>
+        <td>{event.venue}</td>
 
-                    ) : (
+        <td>
+          {availableSeats} / {event.capacity}
+        </td>
 
-                      <span
-                        style={{
-                          color: "green"
-                        }}
-                      >
-                        Available
-                      </span>
+        <td>
 
-                    )}
+          {isEventFull ? (
 
-                  </td>
+            <span
+              style={{
+                color: "red",
+                fontWeight: "bold"
+              }}
+            >
+              Full
+            </span>
 
-                  <td>
+          ) : (
 
-                    <button
-                      className="action-btn"
-                      onClick={() =>
-                        handleRegister(
-                          event._id
-                        )
-                      }
-                      disabled={isFull(
-                        event
-                      )}
-                    >
-                      {isFull(event)
-                        ? "Full"
-                        : "Register"}
-                    </button>
+            <span
+              style={{
+                color: "green"
+              }}
+            >
+              Available
+            </span>
 
-                  </td>
+          )}
 
-                </tr>
+        </td>
 
-              ))}
+        <td>
 
-            </tbody>
+          <button
+            className="action-btn"
+            onClick={() =>
+              handleRegister(
+                event._id
+              )
+            }
+            disabled={isEventFull}
+          >
+            {isEventFull
+              ? "Full"
+              : "Register"}
+          </button>
+
+        </td>
+
+      </tr>
+
+    );
+
+  })}
+
+</tbody>
 
           </table>
 

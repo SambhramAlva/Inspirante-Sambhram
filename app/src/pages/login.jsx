@@ -49,10 +49,7 @@ function Login() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.userId);
       localStorage.setItem("role", data.role);
-      localStorage.setItem(
-  "name",
-  data.name
-);
+      localStorage.setItem("name",data.name);
 
       if (data.role === "admin") {
         navigate("/admin");
