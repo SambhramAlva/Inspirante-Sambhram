@@ -156,7 +156,6 @@ function AvailableEvents() {
                 <th>Event</th>
                 <th>Date</th>
                 <th>Venue</th>
-                <th>Registered</th>
                 <th>Capacity</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -179,8 +178,6 @@ function AvailableEvents() {
                   </td>
 
                   <td>{event.venue}</td>
-
-                  <td>{registrationCounts[event._id] || 0}</td>
 
                   <td>{event.capacity}</td>
 

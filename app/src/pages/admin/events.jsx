@@ -40,6 +40,21 @@ function Events() {
     }
   };
 
+  const getCapacityFillPercentage = (event) => {
+    const registered = registrationCounts[event._id] || 0;
+    return Math.round((registered / event.capacity) * 100);
+  };
+
+  const getFillColor = (percentage) => {
+    if (percentage < 50) {
+      return { color: "green", label: "Low" };
+    } else if (percentage < 80) {
+      return { color: "orange", label: "Medium" };
+    } else {
+      return { color: "red", label: "High" };
+    }
+  };
+
   return (
     <div className="dashboard">
 
@@ -58,16 +73,19 @@ function Events() {
                 <th>Event Name</th>
                 <th>Date</th>
                 <th>Venue</th>
-                <th>Registrations</th>
                 <th>Capacity</th>
+                <th>Fill %</th>
                 <th>Action</th>
               </tr>
             </thead>
 
             <tbody>
 
-              {events.map((event) => (
+              {events.map((event) => {
+                const fillPercentage = getCapacityFillPercentage(event);
+                const fillColor = getFillColor(fillPercentage);
 
+                return (
                 <tr key={event._id}>
 
                   <td>{event.name}</td>
@@ -80,9 +98,18 @@ function Events() {
 
                   <td>{event.venue}</td>
 
-                  <td>{registrationCounts[event._id] || 0}</td>
-
                   <td>{event.capacity}</td>
+
+                  <td>
+                    <span
+                      style={{
+                        color: fillColor.color,
+                        fontWeight: "bold"
+                      }}
+                    >
+                      {fillPercentage}%
+                    </span>
+                  </td>
 
                   <td>
                     <Link
@@ -95,8 +122,8 @@ function Events() {
                   </td>
 
                 </tr>
-
-              ))}
+                );
+              })}
 
             </tbody>
 
