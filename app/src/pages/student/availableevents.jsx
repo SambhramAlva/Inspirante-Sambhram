@@ -5,6 +5,9 @@ import "../../styles/tables.css";
 function AvailableEvents() {
 
   const [events, setEvents] = useState([]);
+  const [registrationCounts, setRegistrationCounts] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchEvents();
@@ -12,18 +15,42 @@ function AvailableEvents() {
 
   const fetchEvents = async () => {
     try {
+      setLoading(true);
+      setError(null);
+      const [eventsRes, registrationsRes] = await Promise.all([
+        fetch("http://localhost:3000/api/events"),
+        fetch("http://localhost:3000/api/registrations")
+      ]);
 
-      const response = await fetch(
-        "http://localhost:3000/api/events"
-      );
+      if (!eventsRes.ok) {
+        throw new Error(`Events fetch failed: ${eventsRes.status}`);
+      }
 
-      const data = await response.json();
+      const eventsData = await eventsRes.json();
+      setEvents(eventsData);
 
-      setEvents(data);
-
-    } catch (error) {
-      console.error(error);
+      if (registrationsRes.ok) {
+        const registrationsData = await registrationsRes.json();
+        const counts = registrationsData.reduce((acc, registration) => {
+          const eventId = registration.eventId?._id || registration.eventId;
+          if (!eventId) return acc;
+          const key = eventId.toString();
+          acc[key] = (acc[key] || 0) + 1;
+          return acc;
+        }, {});
+        setRegistrationCounts(counts);
+      }
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const isFull = (event) => {
+    const registeredCount = registrationCounts[event._id] || 0;
+    return registeredCount >= event.capacity;
   };
 
   const handleRegister = async (eventId) => {
@@ -59,6 +86,8 @@ function AvailableEvents() {
           "Registered Successfully!"
         );
 
+        fetchEvents();
+
       } else {
 
         alert(data.message);
@@ -81,60 +110,102 @@ function AvailableEvents() {
 
         <h1>Available Events</h1>
 
-        <table>
+        {error && (
+          <div style={{ color: "red", marginBottom: "20px" }}>
+            Error: {error}
+          </div>
+        )}
 
-          <thead>
+        {loading && <p>Loading events...</p>}
 
-            <tr>
-              <th>Event</th>
-              <th>Date</th>
-              <th>Venue</th>
-              <th>Capacity</th>
-              <th>Action</th>
-            </tr>
+        {!loading && events.length === 0 && (
+          <p>No events available at this time.</p>
+        )}
 
-          </thead>
+        {!loading && events.length > 0 && (
+          <table>
 
-          <tbody>
+            <thead>
 
-            {events.map((event) => (
-
-              <tr key={event._id}>
-
-                <td>{event.name}</td>
-
-                <td>
-                  {new Date(
-                    event.date
-                  ).toLocaleDateString()}
-                </td>
-
-                <td>{event.venue}</td>
-
-                <td>{event.capacity}</td>
-
-                <td>
-
-                  <button
-                    className="action-btn"
-                    onClick={() =>
-                      handleRegister(
-                        event._id
-                      )
-                    }
-                  >
-                    Register
-                  </button>
-
-                </td>
-
+              <tr>
+                <th>Event</th>
+                <th>Date</th>
+                <th>Venue</th>
+                <th>Registered</th>
+                <th>Capacity</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
 
-            ))}
+            </thead>
 
-          </tbody>
+            <tbody>
 
-        </table>
+              {events.map((event) => (
+
+                <tr key={event._id}>
+
+                  <td>{event.name}</td>
+
+                  <td>
+                    {new Date(
+                      event.date
+                    ).toLocaleDateString()}
+                  </td>
+
+                  <td>{event.venue}</td>
+
+                  <td>{registrationCounts[event._id] || 0}</td>
+
+                  <td>{event.capacity}</td>
+
+                  <td>
+                    {isFull(event) ? (
+                      <span
+                        style={{
+                          color: "red",
+                          fontWeight: "bold"
+                        }}
+                      >
+                        Full
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          color: "green"
+                        }}
+                      >
+                        Available
+                      </span>
+                    )}
+                  </td>
+
+                  <td>
+
+                    <button
+                      className="action-btn"
+                      onClick={() =>
+                        handleRegister(
+                          event._id
+                        )
+                      }
+                      disabled={isFull(event)}
+                    >
+                      {isFull(event)
+                        ? "Full"
+                        : "Register"}
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+        )}
 
       </main>
 
