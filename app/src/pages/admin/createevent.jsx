@@ -9,6 +9,7 @@ function CreateEvent() {
     venue: "",
     capacity: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setEventData({
@@ -19,6 +20,12 @@ function CreateEvent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const response = await fetch(
@@ -51,6 +58,8 @@ function CreateEvent() {
     } catch (error) {
       console.error(error);
       alert("Server Error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -66,8 +75,9 @@ function CreateEvent() {
 
             <form onSubmit={handleSubmit}>
 
-              <label>Event Name</label>
+              <label htmlFor="name">Event Name</label>
               <input
+                id="name"
                 type="text"
                 name="name"
                 value={eventData.name}
@@ -76,8 +86,9 @@ function CreateEvent() {
                 required
               />
 
-              <label>Date</label>
+              <label htmlFor="date">Date</label>
               <input
+                id="date"
                 type="date"
                 name="date"
                 value={eventData.date}
@@ -85,8 +96,9 @@ function CreateEvent() {
                 required
               />
 
-              <label>Venue</label>
+              <label htmlFor="venue">Venue</label>
               <input
+                id="venue"
                 type="text"
                 name="venue"
                 value={eventData.venue}
@@ -95,8 +107,9 @@ function CreateEvent() {
                 required
               />
 
-              <label>Maximum Capacity</label>
+              <label htmlFor="capacity">Maximum Capacity</label>
               <input
+                id="capacity"
                 type="number"
                 name="capacity"
                 value={eventData.capacity}
@@ -105,8 +118,8 @@ function CreateEvent() {
                 required
               />
 
-              <button type="submit">
-                Create Event
+              <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Creating..." : "Create Event"}
               </button>
 
             </form>
