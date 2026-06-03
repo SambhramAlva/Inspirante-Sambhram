@@ -27,7 +27,12 @@ function AvailableEvents() {
       }
 
       const eventsData = await eventsRes.json();
-      setEvents(eventsData);
+      
+      const sortedEvents = eventsData.sort((a, b) => {
+        return new Date(a.date) - new Date(b.date);
+      });
+      
+      setEvents(sortedEvents);
 
       if (registrationsRes.ok) {
         const registrationsData = await registrationsRes.json();
