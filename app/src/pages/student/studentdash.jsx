@@ -7,15 +7,27 @@ function StudentDashboard() {
   const [myRegistrations, setMyRegistrations] = useState(0);
   const [upcomingEvents, setUpcomingEvents] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        setError("");
         const studentId = localStorage.getItem("userId");
+        const authHeaders = getAuthHeaders();
 
         const eventsRequest = fetch("http://localhost:3000/api/events");
-        const registrationsRequest = studentId
-          ? fetch(`http://localhost:3000/api/registrations/student/${studentId}`)
+        const registrationsRequest = studentId && authHeaders.Authorization
+          ? fetch(`http://localhost:3000/api/registrations/student/${studentId}`, {
+              headers: {
+                ...authHeaders
+              }
+            })
           : Promise.resolve({ ok: true, json: async () => [] });
 
         const [eventsRes, registrationsRes] = await Promise.all([
@@ -44,6 +56,7 @@ function StudentDashboard() {
         setUpcomingEvents(upcomingCount);
       } catch (error) {
         console.error(error);
+        setError(error.message || "Failed to load student dashboard data");
       } finally {
         setLoading(false);
       }
@@ -69,6 +82,10 @@ function StudentDashboard() {
       <main className="content">
 
         <h1>Welcome Student</h1>
+
+        {error && (
+          <div style={{ color: "red", marginBottom: "20px" }}>{error}</div>
+        )}
 
         <div className="cards">
 

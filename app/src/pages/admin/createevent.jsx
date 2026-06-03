@@ -1,6 +1,6 @@
 import { useState } from "react";
-import "../../styles/forms.css";
 import AdminSidebar from "../../components/AdminSidebar";
+import "../../styles/forms.css";
 
 function CreateEvent() {
   const [eventData, setEventData] = useState({
@@ -9,17 +9,35 @@ function CreateEvent() {
     venue: "",
     capacity: ""
   });
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    setEventData({
-      ...eventData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setEventData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
+    if (!eventData.name.trim() || !eventData.date || !eventData.venue.trim() || !eventData.capacity) {
+      setError("All fields are required.");
+      return;
+    }
+
+    if (Number.parseInt(eventData.capacity) <= 0) {
+      setError("Capacity must be greater than 0.");
+      return;
+    }
 
     if (isSubmitting) {
       return;
@@ -28,36 +46,44 @@ function CreateEvent() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/events",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(eventData)
-        }
-      );
+      const authHeaders = getAuthHeaders();
+
+      if (!authHeaders.Authorization) {
+        setError("You must be logged in to create an event.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:3000/api/events", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders
+        },
+        body: JSON.stringify({
+          name: eventData.name.trim(),
+          date: eventData.date,
+          venue: eventData.venue.trim(),
+          capacity: Number.parseInt(eventData.capacity)
+        })
+      });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert("Event Created Successfully!");
-
-        console.log(data);
-
+        setError("");
         setEventData({
           name: "",
           date: "",
           venue: "",
           capacity: ""
         });
+        alert("Event Created Successfully!");
       } else {
-        alert(data.message || "Failed to create event");
+        setError(data.message || "Failed to create event");
       }
     } catch (error) {
       console.error(error);
-      alert("Server Error");
+      setError("Unable to connect to server");
     } finally {
       setIsSubmitting(false);
     }
@@ -65,69 +91,57 @@ function CreateEvent() {
 
   return (
     <div className="dashboard">
+
       <AdminSidebar />
 
       <main className="content">
-        <div className="form-container">
-          <div className="form-card">
+    <div className="form-container">
+      <div className="form-card">
+        <h1>Create Event</h1>
 
-            <h1>Create Event</h1>
+        {error && <div style={{ color: "red", marginBottom: "20px" }}>{error}</div>}
 
-            <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Event Name"
+            value={eventData.name}
+            onChange={handleChange}
+          />
 
-              <label htmlFor="name">Event Name</label>
-              <input
-                id="name"
-                type="text"
-                name="name"
-                value={eventData.name}
-                onChange={handleChange}
-                placeholder="Enter event name"
-                required
-              />
+          <input
+            type="date"
+            name="date"
+            value={eventData.date}
+            onChange={handleChange}
+          />
 
-              <label htmlFor="date">Date</label>
-              <input
-                id="date"
-                type="date"
-                name="date"
-                value={eventData.date}
-                onChange={handleChange}
-                required
-              />
+          <input
+            type="text"
+            name="venue"
+            placeholder="Venue"
+            value={eventData.venue}
+            onChange={handleChange}
+          />
 
-              <label htmlFor="venue">Venue</label>
-              <input
-                id="venue"
-                type="text"
-                name="venue"
-                value={eventData.venue}
-                onChange={handleChange}
-                placeholder="Enter venue"
-                required
-              />
+          <input
+            type="number"
+            name="capacity"
+            placeholder="Capacity"
+            value={eventData.capacity}
+            onChange={handleChange}
+          />
 
-              <label htmlFor="capacity">Maximum Capacity</label>
-              <input
-                id="capacity"
-                type="number"
-                name="capacity"
-                value={eventData.capacity}
-                onChange={handleChange}
-                placeholder="Enter capacity"
-                required
-              />
-
-              <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creating..." : "Create Event"}
-              </button>
-
-            </form>
-
-          </div>
-        </div>
-      </main>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Creating..." : "Create Event"}
+          </button>
+        </form>
+      </div>
     </div>
+    </main>
+    </div>
+    
   );
 }
 

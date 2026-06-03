@@ -7,8 +7,14 @@ function Registrations() {
 
   const { id } = useParams();
 
-  const [registrations, setRegistrations] =
-    useState([]);
+  const [registrations, setRegistrations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
 
   useEffect(() => {
     fetchRegistrations();
@@ -16,17 +22,37 @@ function Registrations() {
 
   const fetchRegistrations = async () => {
     try {
+      setError("");
+      setLoading(true);
+      const authHeaders = getAuthHeaders();
+
+      if (!authHeaders.Authorization) {
+        setError("Authentication required to view event registrations.");
+        return;
+      }
 
       const response = await fetch(
-        `http://localhost:3000/api/registrations/event/${id}`
+        `http://localhost:3000/api/registrations/event/${id}`,
+        {
+          headers: {
+            ...authHeaders
+          }
+        }
       );
 
       const data = await response.json();
 
-      setRegistrations(data);
+      if (!response.ok) {
+        setError(data.message || "Failed to load registrations");
+        return;
+      }
 
+      setRegistrations(data);
     } catch (error) {
       console.error(error);
+      setError("Unable to connect to server");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,42 +67,28 @@ function Registrations() {
 
           <h1>Event Registrations</h1>
 
-          <table>
+          {error && <div style={{ color: "red", marginBottom: "20px" }}>{error}</div>}
 
-            <thead>
-              <tr>
-                <th>Username</th>
-                
-                <th>Registered On</th>
-              </tr>
-            </thead>
-
-            <tbody>
-
-              {registrations.map((item) => (
-
-                <tr key={item._id}>
-
-                  <td>
-                    {item.studentId?.username}
-                  </td>
-
-                  
-
-                  <td>
-                    {new Date(
-                      item.registeredAt
-                    ).toLocaleDateString()}
-                  </td>
-
+          {loading ? (
+            <p>Loading registrations...</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Registered On</th>
                 </tr>
-
-              ))}
-
-            </tbody>
-
-          </table>
-
+              </thead>
+              <tbody>
+                {registrations.map((item) => (
+                  <tr key={item._id}>
+                    <td>{item.studentId?.username}</td>
+                    <td>{new Date(item.registeredAt).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
       </main>

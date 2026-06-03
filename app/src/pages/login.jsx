@@ -6,51 +6,60 @@ function Login() {
   // State Variables
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   // Login Function
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+
+    if (!username.trim() || !password.trim()) {
+      setError("Username and password are required.");
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username,
-            password,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username.trim(),
+          password: password.trim(),
+        }),
+      });
 
       const data = await response.json();
 
-      if (data.success) {
-        localStorage.setItem(
-  "userId",
-  data.userId
-);
-
-localStorage.setItem(
-  "role",
-  data.role
-);
-        if (data.role === "admin") {
-          navigate("/admin");
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError("Invalid Credentials");
         } else {
-          navigate("/student");
+          setError(data.message || "Unable to connect to server");
         }
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("role", data.role);
+
+      if (data.role === "admin") {
+        navigate("/admin");
       } else {
-        alert("Invalid Credentials");
+        navigate("/student");
       }
     } catch (error) {
       console.error(error);
-      alert("Server Error");
+      setError("Unable to connect to server");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -59,15 +68,15 @@ localStorage.setItem(
       <div className="login-box">
         <h2>Login</h2>
 
+        {error && <div className="error-text">{error}</div>}
+
         <form onSubmit={handleLogin}>
           <input
             type="text"
             placeholder="Enter Username"
             className="input-field"
             value={username}
-            onChange={(e) =>
-              setUsername(e.target.value)
-            }
+            onChange={(e) => setUsername(e.target.value)}
           />
 
           <input
@@ -75,16 +84,11 @@ localStorage.setItem(
             placeholder="Enter Password"
             className="input-field"
             value={password}
-            onChange={(e) =>
-              setPassword(e.target.value)
-            }
+            onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button
-            type="submit"
-            className="login-btn"
-          >
-            Login
+          <button type="submit" className="login-btn" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

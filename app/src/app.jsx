@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import ProtectedRoute
+from "./components/ProtectedRoute";
 // Common Login
 import Login from "./pages/login";
 
@@ -23,23 +24,37 @@ function App() {
         <Route path="/" element={<Login />} />
 
         {/* Admin Routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/create-event" element={<CreateEvent />} />
-        <Route path="/admin/events" element={<Events />} />
+        <Route path="/admin" element={<ProtectedRoute allowedRole="admin"><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/create-event" element={<ProtectedRoute
+      allowedRole="admin"
+    ><CreateEvent /></ProtectedRoute>} />
+        <Route path="/admin/events" element={<ProtectedRoute
+      allowedRole="admin"
+    ><Events /></ProtectedRoute>} />
         <Route
           path="/admin/events/:id/registrations"
-          element={<Registrations />}
+          element={<ProtectedRoute
+      allowedRole="admin"
+    ><Registrations /></ProtectedRoute>}
         />
 
         {/* Student Routes */}
-        <Route path="/student" element={<StudentDashboard />} />
+        <Route path="/student" element={<ProtectedRoute
+      allowedRole="student"
+    >
+      <StudentDashboard />
+    </ProtectedRoute>} />
         <Route
           path="/student/events"
-          element={<AvailableEvents />}
+          element={<ProtectedRoute
+      allowedRole="student"
+    ><AvailableEvents /></ProtectedRoute>}
         />
         <Route
           path="/student/registrations"
-          element={<MyRegistrations />}
+          element={<ProtectedRoute
+      allowedRole="student"
+    ><MyRegistrations /></ProtectedRoute>}
         />
 
       </Routes>
