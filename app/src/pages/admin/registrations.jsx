@@ -27,7 +27,7 @@ function Registrations() {
       const authHeaders = getAuthHeaders();
 
       if (!authHeaders.Authorization) {
-        setError("Authentication required to view event registrations.");
+        alert("Authentication required to view event registrations.");
         return;
       }
 
@@ -43,14 +43,14 @@ function Registrations() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || "Failed to load registrations");
+        alert(data.message || "Failed to load registrations");
         return;
       }
 
       setRegistrations(data);
     } catch (error) {
       console.error(error);
-      setError("Unable to connect to server");
+      alert("Unable to connect to server");
     } finally {
       setLoading(false);
     }

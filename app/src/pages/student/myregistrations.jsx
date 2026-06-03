@@ -26,7 +26,7 @@ function MyRegistrations() {
       const authHeaders = getAuthHeaders();
 
       if (!studentId || !authHeaders.Authorization) {
-        setError("You must be logged in to see your registrations.");
+        alert("You must be logged in to see your registrations.");
         return;
       }
 

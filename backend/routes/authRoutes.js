@@ -34,7 +34,8 @@ res.json({
   success: true,
   token,
   role: user.role,
-  userId: user._id
+  userId: user._id,
+  name: user.name
 });
 
   } catch (error) {

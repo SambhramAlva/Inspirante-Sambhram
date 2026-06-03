@@ -44,12 +44,12 @@ function CreateEvent() {
       !eventData.venue.trim() ||
       !eventData.capacity
     ) {
-      setError("All fields are required.");
+      alert("All fields are required.");
       return;
     }
 
     if (Number.parseInt(eventData.capacity) <= 0) {
-      setError("Capacity must be greater than 0.");
+      alert("Capacity must be greater than 0.");
       return;
     }
 
@@ -61,7 +61,7 @@ function CreateEvent() {
       const authHeaders = getAuthHeaders();
 
       if (!authHeaders.Authorization) {
-        setError("You must be logged in.");
+        alert("You must be logged in.");
         return;
       }
 

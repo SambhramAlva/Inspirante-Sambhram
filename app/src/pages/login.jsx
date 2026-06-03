@@ -17,7 +17,7 @@ function Login() {
     setError("");
 
     if (!username.trim() || !password.trim()) {
-      setError("Username and password are required.");
+      alert("Username and password are required.");
       return;
     }
 
@@ -39,9 +39,9 @@ function Login() {
 
       if (!response.ok) {
         if (response.status === 401) {
-          setError("Invalid Credentials");
+          alert("Invalid Credentials");
         } else {
-          setError(data.message || "Unable to connect to server");
+          alert(data.message || "Unable to connect to server");
         }
         return;
       }
@@ -49,6 +49,10 @@ function Login() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.userId);
       localStorage.setItem("role", data.role);
+      localStorage.setItem(
+  "name",
+  data.name
+);
 
       if (data.role === "admin") {
         navigate("/admin");
@@ -57,7 +61,7 @@ function Login() {
       }
     } catch (error) {
       console.error(error);
-      setError("Unable to connect to server");
+      alert("Unable to connect to server");
     } finally {
       setIsLoading(false);
     }

@@ -8,6 +8,9 @@ function StudentDashboard() {
   const [upcomingEvents, setUpcomingEvents] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const studentName =
+    localStorage.getItem("name");
+
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -81,7 +84,7 @@ function StudentDashboard() {
       {/* Main Content */}
       <main className="content">
 
-        <h1>Welcome Student</h1>
+        <h1>Welcome {studentName}</h1>
 
         {error && (
           <div style={{ color: "red", marginBottom: "20px" }}>{error}</div>
