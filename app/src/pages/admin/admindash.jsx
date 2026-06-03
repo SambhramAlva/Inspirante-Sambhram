@@ -12,8 +12,8 @@ function AdminDashboard() {
     const fetchDashboardTotals = async () => {
       try {
         const [eventsRes, registrationsRes] = await Promise.all([
-          fetch("http://localhost:5000/api/events"),
-          fetch("http://localhost:5000/api/registrations")
+          fetch("http://localhost:3000/api/events"),
+          fetch("http://localhost:3000/api/registrations")
         ]);
 
         if (!eventsRes.ok || !registrationsRes.ok) {

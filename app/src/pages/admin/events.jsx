@@ -6,6 +6,7 @@ import AdminSidebar from "../../components/AdminSidebar";
 function Events() {
 
   const [events, setEvents] = useState([]);
+  const [registrationCounts, setRegistrationCounts] = useState({});
 
   useEffect(() => {
     fetchEvents();
@@ -13,15 +14,27 @@ function Events() {
 
   const fetchEvents = async () => {
     try {
+      const [eventsRes, registrationsRes] = await Promise.all([
+        fetch("http://localhost:3000/api/events"),
+        fetch("http://localhost:3000/api/registrations")
+      ]);
 
-      const response = await fetch(
-        "http://localhost:5000/api/events"
-      );
+      const [eventsData, registrationsData] = await Promise.all([
+        eventsRes.json(),
+        registrationsRes.json()
+      ]);
 
-      const data = await response.json();
+      setEvents(eventsData);
 
-      setEvents(data);
+      const counts = registrationsData.reduce((acc, registration) => {
+        const eventId = registration.eventId?._id || registration.eventId;
+        if (!eventId) return acc;
+        const key = eventId.toString();
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {});
 
+      setRegistrationCounts(counts);
     } catch (error) {
       console.error(error);
     }
@@ -45,6 +58,7 @@ function Events() {
                 <th>Event Name</th>
                 <th>Date</th>
                 <th>Venue</th>
+                <th>Registrations</th>
                 <th>Capacity</th>
                 <th>Action</th>
               </tr>
@@ -65,6 +79,8 @@ function Events() {
                   </td>
 
                   <td>{event.venue}</td>
+
+                  <td>{registrationCounts[event._id] || 0}</td>
 
                   <td>{event.capacity}</td>
 

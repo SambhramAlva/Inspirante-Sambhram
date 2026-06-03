@@ -19,7 +19,7 @@ function MyRegistrations() {
         localStorage.getItem("userId");
 
       const response = await fetch(
-        `http://localhost:5000/api/registrations/student/${studentId}`
+        `http://localhost:3000/api/registrations/student/${studentId}`
       );
 
       const data = await response.json();

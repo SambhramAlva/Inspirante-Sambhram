@@ -13,9 +13,9 @@ function StudentDashboard() {
       try {
         const studentId = localStorage.getItem("userId");
 
-        const eventsRequest = fetch("http://localhost:5000/api/events");
+        const eventsRequest = fetch("http://localhost:3000/api/events");
         const registrationsRequest = studentId
-          ? fetch(`http://localhost:5000/api/registrations/student/${studentId}`)
+          ? fetch(`http://localhost:3000/api/registrations/student/${studentId}`)
           : Promise.resolve({ ok: true, json: async () => [] });
 
         const [eventsRes, registrationsRes] = await Promise.all([

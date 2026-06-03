@@ -14,7 +14,7 @@ function AvailableEvents() {
     try {
 
       const response = await fetch(
-        "http://localhost:5000/api/events"
+        "http://localhost:3000/api/events"
       );
 
       const data = await response.json();
@@ -34,7 +34,7 @@ function AvailableEvents() {
         localStorage.getItem("userId");
 
       const response = await fetch(
-        "http://localhost:5000/api/registrations",
+        "http://localhost:3000/api/registrations",
         {
           method: "POST",
 

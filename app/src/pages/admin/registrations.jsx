@@ -18,7 +18,7 @@ function Registrations() {
     try {
 
       const response = await fetch(
-        `http://localhost:5000/api/registrations/event/${id}`
+        `http://localhost:3000/api/registrations/event/${id}`
       );
 
       const data = await response.json();
@@ -47,7 +47,7 @@ function Registrations() {
               <tr>
                 <th>Username</th>
                 
-                <th>Registered At</th>
+                <th>Registered On</th>
               </tr>
             </thead>
 
